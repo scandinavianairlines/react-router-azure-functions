@@ -1011,10 +1011,10 @@ __metadata:
   linkType: hard
 
 "@remix-run/node@npm:^2.16.8":
-  version: 2.16.8
-  resolution: "@remix-run/node@npm:2.16.8"
+  version: 2.17.0
+  resolution: "@remix-run/node@npm:2.17.0"
   dependencies:
-    "@remix-run/server-runtime": "npm:2.16.8"
+    "@remix-run/server-runtime": "npm:2.17.0"
     "@remix-run/web-fetch": "npm:^4.4.2"
     "@web3-storage/multipart-parser": "npm:^1.0.0"
     cookie-signature: "npm:^1.1.0"
@@ -1026,7 +1026,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/b661009ab17c127ee1cbcd54828d99ade316f7b9e0bc1aa846947f4236613097f957f02b50f0eb2938b050ad66a2cf7f40f0afc8eaa3e57576fba4bcb4c581bb
+  checksum: 10/43169e872783240fb4df6d6cebcf23a6b9fa94a3609e801905747444c2a2be42e57a61bf7875393cd21ec95f360c7967b3a3fa5c9b144f084431fff12b8c3c5c
   languageName: node
   linkType: hard
 
@@ -1037,9 +1037,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@remix-run/server-runtime@npm:2.16.8":
-  version: 2.16.8
-  resolution: "@remix-run/server-runtime@npm:2.16.8"
+"@remix-run/server-runtime@npm:2.17.0":
+  version: 2.17.0
+  resolution: "@remix-run/server-runtime@npm:2.17.0"
   dependencies:
     "@remix-run/router": "npm:1.23.0"
     "@types/cookie": "npm:^0.6.0"
@@ -1053,7 +1053,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/a7cf58b276b5045d2f6f3b639208c3efbc9ecf092e5342b95b4b098be84e7cede21a87014fad3e274def10f389e8d13a2d0bed89710c925f9b6ef1cc901dc89a
+  checksum: 10/63300cb01c78d27eede221c415f8d815b985878c7a9f60f7f71a9c82d1d46fd66524442c6908562fd9e65b221b8d1ab4a89c4187c4470198830be3a8d8982eca
   languageName: node
   linkType: hard
 
