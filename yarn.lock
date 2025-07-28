@@ -1267,7 +1267,7 @@ __metadata:
     eslint: "npm:^9.31.0"
     eslint-config-prettier: "npm:^10.1.5"
     eslint-plugin-disable: "npm:^2.0.3"
-    eslint-plugin-jsdoc: "npm:^51.3.4"
+    eslint-plugin-jsdoc: "npm:^52.0.0"
     eslint-plugin-prettier: "npm:^5.5.1"
     eslint-plugin-sort-destructure-keys: "npm:^2.0.0"
     eslint-plugin-unicorn: "npm:^59.0.1"
@@ -3792,9 +3792,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:^51.3.4":
-  version: 51.3.4
-  resolution: "eslint-plugin-jsdoc@npm:51.3.4"
+"eslint-plugin-jsdoc@npm:^52.0.0":
+  version: 52.0.0
+  resolution: "eslint-plugin-jsdoc@npm:52.0.0"
   dependencies:
     "@es-joy/jsdoccomment": "npm:~0.52.0"
     are-docs-informative: "npm:^0.0.2"
@@ -3808,7 +3808,7 @@ __metadata:
     spdx-expression-parse: "npm:^4.0.0"
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0 || ^9.0.0
-  checksum: 10/0979a0b7cdb9c8c8e3dde5cebac44a367f2eda5913a6dd1f93fe8141b2e6ed4bbf229b82d44d2b6cd7607bd98dc6c5f279e6179f40c06a4a02e0f67b75ee7dfd
+  checksum: 10/e8d2bb0303d769b87ff7ed2c2c9670ed8596bbdbd887b027ee717cf175947a2fad686bcdaddc64983a4d368e720f04f0e01e52e46dcb09f74d19e72722179a32
   languageName: node
   linkType: hard
 
