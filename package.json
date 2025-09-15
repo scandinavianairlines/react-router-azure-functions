@@ -61,7 +61,7 @@
     "eslint-plugin-unicorn": "^59.0.1",
     "eslint-plugin-vitest": "^0.5.4",
     "husky": "^9.1.7",
-    "inquirer": "^9.3.7",
+    "inquirer": "^12.9.6",
     "lint-staged": "^16.1.2",
     "neostandard": "^0.12.2",
     "pinst": "^3.0.0",
