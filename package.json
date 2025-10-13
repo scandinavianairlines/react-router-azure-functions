@@ -55,7 +55,7 @@
     "eslint": "^9.31.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-disable": "^2.0.3",
-    "eslint-plugin-jsdoc": "^51.3.4",
+    "eslint-plugin-jsdoc": "^61.1.1",
     "eslint-plugin-prettier": "^5.5.1",
     "eslint-plugin-sort-destructure-keys": "^2.0.0",
     "eslint-plugin-unicorn": "^59.0.1",
