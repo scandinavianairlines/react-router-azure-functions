@@ -1,7 +1,7 @@
 {
   "extends": "@tsconfig/node-lts/tsconfig.json",
   "compilerOptions": {
-    "composite": true,
+    "composite": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "target": "ES2022",
@@ -9,12 +9,11 @@
     "resolveJsonModule": true,
     "moduleDetection": "force",
     "isolatedModules": true,
-    "verbatimModuleSyntax": true,
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "module": "NodeNext",
-    "noEmit": true,
+    "noEmit": false,
     "checkJs": true,
     "lib": ["ES2022"],
     "moduleResolution": "NodeNext",
@@ -22,10 +21,13 @@
     "baseUrl": ".",
     "resolvePackageJsonExports": true,
     "resolvePackageJsonImports": true,
-    "outDir": "types/",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "declarationMap": true,
+    "outDir": "types",
     "sourceMap": false,
     "types": ["vitest/globals"]
   },
   "include": ["./src/**/*.js", "index.js"],
-  "exclude": ["index.d.ts", "src/**/*.d.ts", "src/**/*.test.js", "examples/"]
+  "exclude": ["index.d.ts", "src/**/*.d.ts", "src/**/*.test.js", "examples/", "node_modules/"]
 }
