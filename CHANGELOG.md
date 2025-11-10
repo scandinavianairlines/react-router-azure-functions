@@ -1,3 +1,10 @@
+## 2.0.2 (2025-11-10)
+
+
+### Bug Fixes
+
+* **types:** update tsconfig to emit declaration files only 4342d57
+
 ## 2.0.1 (2025-07-14)
 
 
