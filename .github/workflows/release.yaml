@@ -24,7 +24,7 @@ jobs:
           app-id: ${{ vars.GANDALF_APP_ID }}
           private-key: ${{ secrets.GANDALF_PRIVATE_KEY }}
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           # Needs to fetch historical commits in order to compare with origin/main
           fetch-depth: 0
