@@ -49,7 +49,7 @@ async function toAzureResponse(response) {
  * @param {typeof urlParser} [options.urlParser] Function to parse the incoming request to a URL object.
  * @returns {Request} An instance of React Router `Request`.
  */
-function createRemixRequest(request, options = {}) {
+function createRequest(request, options = {}) {
   const url = options.urlParser?.(request) || urlParser(request);
   // Note: No current way to abort these for Azure, but our router expects
   // requests to contain a signal so it can detect aborted requests
@@ -90,11 +90,11 @@ export function createRequestHandler(options) {
    * @returns {Promise<import('@azure/functions').HttpResponseInit>} A Azure Function `http response init` object.
    */
   async function functionHandler(request, context) {
-    const remixRequest = createRemixRequest(request, { urlParser: options.urlParser });
-    const loadContext = await options.getLoadContext?.(remixRequest, context);
-    const remixResponse = await handler(remixRequest, loadContext);
+    const request_ = createRequest(request, { urlParser: options.urlParser });
+    const loadContext = await options.getLoadContext?.(request_, context);
+    const response = await handler(request_, loadContext);
 
-    return toAzureResponse(remixResponse);
+    return toAzureResponse(response);
   }
 
   return functionHandler;
