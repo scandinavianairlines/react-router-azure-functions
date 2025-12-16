@@ -159,3 +159,4 @@ appsettings.json
 local.settings.json
 examples/**/.yarn
 types/
+plans/

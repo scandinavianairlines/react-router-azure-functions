@@ -1,10 +1,10 @@
 import { HttpRequest } from '@azure/functions';
-import { createRequestHandler as createRemixRequestHandler } from '@remix-run/node';
+import { createRequestHandler as createReactRouterRequestHandler } from 'react-router';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { createRequestHandler } from './server.js';
 
-vi.mock('@remix-run/node', () => ({
+vi.mock('react-router', () => ({
   createRequestHandler: vi.fn(),
 }));
 
@@ -27,13 +27,13 @@ describe('server', () => {
       params: undefined,
       url: 'https://test.com',
     });
-    createRemixRequestHandler.mockReturnValue(mockHandler);
+    createReactRouterRequestHandler.mockReturnValue(mockHandler);
     const handler = createRequestHandler({
       build: {},
     });
     const response = await handler(mockHttpRequest, {});
 
-    expect(createRemixRequestHandler).toHaveBeenCalled();
+    expect(createReactRouterRequestHandler).toHaveBeenCalled();
     expect(mockHandler).toHaveBeenCalledWith(expect.any(Request), undefined);
     expect(response).toEqual(
       expect.objectContaining({
@@ -52,13 +52,13 @@ describe('server', () => {
       params: undefined,
       url: 'https://test.com',
     });
-    createRemixRequestHandler.mockReturnValue(mockHandler);
+    createReactRouterRequestHandler.mockReturnValue(mockHandler);
     const handler = createRequestHandler({
       build: {},
     });
     const response = await handler(mockHttpRequest, {});
 
-    expect(createRemixRequestHandler).toHaveBeenCalled();
+    expect(createReactRouterRequestHandler).toHaveBeenCalled();
     expect(mockHandler).toHaveBeenCalledWith(expect.any(Request), undefined);
     expect(response).toEqual(
       expect.objectContaining({
@@ -81,13 +81,13 @@ describe('server', () => {
       params: undefined,
       url: 'https://test.com',
     });
-    createRemixRequestHandler.mockReturnValue(mockHandler);
+    createReactRouterRequestHandler.mockReturnValue(mockHandler);
     const handler = createRequestHandler({
       build: {},
     });
     const response = await handler(mockHttpRequest, {});
 
-    expect(createRemixRequestHandler).toHaveBeenCalled();
+    expect(createReactRouterRequestHandler).toHaveBeenCalled();
     expect(mockHandler).toHaveBeenCalledWith(expect.any(Request), undefined);
     expect(response).toEqual(
       expect.objectContaining({
@@ -110,7 +110,7 @@ describe('server', () => {
     });
     const mockGetLoadContext = vi.fn().mockResolvedValue({});
     const mockAzureContext = { log: vi.fn() };
-    createRemixRequestHandler.mockReturnValue(mockHandler);
+    createReactRouterRequestHandler.mockReturnValue(mockHandler);
     const handler = createRequestHandler({
       build: {},
       getLoadContext: mockGetLoadContext,
@@ -130,7 +130,7 @@ describe('server', () => {
       url: 'https://test.com',
     });
     const mockUrlParser = vi.fn().mockReturnValue(new URL('https://test.com'));
-    createRemixRequestHandler.mockReturnValue(mockHandler);
+    createReactRouterRequestHandler.mockReturnValue(mockHandler);
     const handler = createRequestHandler({
       build: {},
       urlParser: mockUrlParser,
@@ -150,7 +150,7 @@ describe('server', () => {
       url: 'https://test.com',
     });
 
-    createRemixRequestHandler.mockReturnValue(mockHandler);
+    createReactRouterRequestHandler.mockReturnValue(mockHandler);
     const handler = createRequestHandler({
       build: {},
     });
@@ -174,7 +174,7 @@ describe('server', () => {
       url: 'https://test.com',
     });
 
-    createRemixRequestHandler.mockReturnValue(mockHandler);
+    createReactRouterRequestHandler.mockReturnValue(mockHandler);
     const handler = createRequestHandler({
       build: {},
     });
@@ -198,7 +198,7 @@ describe('server', () => {
       url: 'https://test.com',
     });
 
-    createRemixRequestHandler.mockReturnValue(mockHandler);
+    createReactRouterRequestHandler.mockReturnValue(mockHandler);
     const handler = createRequestHandler({
       build: {},
     });
@@ -222,7 +222,7 @@ describe('server', () => {
       url: 'https://test.com',
     });
 
-    createRemixRequestHandler.mockReturnValue(mockHandler);
+    createReactRouterRequestHandler.mockReturnValue(mockHandler);
     const handler = createRequestHandler({
       build: {},
     });
@@ -246,7 +246,7 @@ describe('server', () => {
       url: 'https://test-forwarded.com',
     });
 
-    createRemixRequestHandler.mockReturnValue(mockHandler);
+    createReactRouterRequestHandler.mockReturnValue(mockHandler);
     const handler = createRequestHandler({
       build: {},
     });
@@ -270,7 +270,7 @@ describe('server', () => {
       url: 'https://test.com',
     });
 
-    createRemixRequestHandler.mockReturnValue(mockHandler);
+    createReactRouterRequestHandler.mockReturnValue(mockHandler);
     const handler = createRequestHandler({
       build: {},
     });
@@ -295,7 +295,7 @@ describe('server', () => {
       url: 'https://test.com',
     });
 
-    createRemixRequestHandler.mockReturnValue(mockHandler);
+    createReactRouterRequestHandler.mockReturnValue(mockHandler);
     const handler = createRequestHandler({
       build: {},
     });
@@ -309,5 +309,157 @@ describe('server', () => {
       }),
       undefined
     );
+  });
+
+  test('accepts build as a function', async () => {
+    const mockBuild = { routes: {} };
+    const buildFn = vi.fn().mockResolvedValue(mockBuild);
+    const mockHandler = vi.fn().mockResolvedValue(new Response());
+
+    createReactRouterRequestHandler.mockReturnValue(mockHandler);
+
+    const handler = createRequestHandler({
+      build: buildFn,
+    });
+
+    const mockHttpRequest = new HttpRequest({
+      method: 'GET',
+      headers: { 'x-forwarded-host': 'test.com' },
+      params: undefined,
+      url: 'https://test.com',
+    });
+
+    await handler(mockHttpRequest, {});
+
+    expect(createReactRouterRequestHandler).toHaveBeenCalledWith(buildFn, expect.any(String));
+  });
+
+  test('supports streaming responses with ReadableStream', async () => {
+    const streamContent = 'streaming data chunk';
+    const stream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode(streamContent));
+        controller.close();
+      },
+    });
+
+    const mockHandler = vi.fn().mockResolvedValue(
+      new Response(stream, {
+        headers: { 'Content-Type': 'text/plain' },
+      })
+    );
+
+    const mockHttpRequest = new HttpRequest({
+      method: 'GET',
+      headers: { 'x-forwarded-host': 'test.com' },
+      params: undefined,
+      url: 'https://test.com',
+    });
+
+    createReactRouterRequestHandler.mockReturnValue(mockHandler);
+    const handler = createRequestHandler({
+      build: {},
+    });
+
+    const response = await handler(mockHttpRequest, {});
+
+    expect(response.body).toBeInstanceOf(ReadableStream);
+    expect(response.headers).toEqual({ 'content-type': 'text/plain' });
+    expect(response.status).toBe(200);
+
+    // Verify stream is readable (not consumed)
+    const reader = response.body.getReader();
+    const { done, value } = await reader.read();
+    expect(done).toBe(false);
+    expect(new TextDecoder().decode(value)).toBe(streamContent);
+  });
+
+  test('supports large streaming responses without buffering', async () => {
+    const chunks = ['chunk1', 'chunk2', 'chunk3'];
+    const stream = new ReadableStream({
+      start(controller) {
+        for (const chunk of chunks) {
+          controller.enqueue(new TextEncoder().encode(chunk));
+        }
+        controller.close();
+      },
+    });
+
+    const mockHandler = vi.fn().mockResolvedValue(
+      new Response(stream, {
+        headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
+      })
+    );
+
+    const mockHttpRequest = new HttpRequest({
+      method: 'GET',
+      headers: { 'x-forwarded-host': 'test.com' },
+      params: undefined,
+      url: 'https://test.com/events',
+    });
+
+    createReactRouterRequestHandler.mockReturnValue(mockHandler);
+    const handler = createRequestHandler({
+      build: {},
+    });
+
+    const response = await handler(mockHttpRequest, {});
+
+    expect(response.body).toBeInstanceOf(ReadableStream);
+    expect(response.headers['content-type']).toBe('text/event-stream');
+
+    // Verify all chunks are streamable
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    const receivedChunks = [];
+
+    let result = await reader.read();
+    while (!result.done) {
+      receivedChunks.push(decoder.decode(result.value));
+      result = await reader.read();
+    }
+
+    expect(receivedChunks).toEqual(chunks);
+  });
+
+  test('preserves streaming headers for Server-Sent Events', async () => {
+    const sseStream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode('data: hello\n\n'));
+        controller.close();
+      },
+    });
+
+    const mockHandler = vi.fn().mockResolvedValue(
+      new Response(sseStream, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          Connection: 'keep-alive',
+        },
+      })
+    );
+
+    const mockHttpRequest = new HttpRequest({
+      method: 'GET',
+      headers: { 'x-forwarded-host': 'test.com' },
+      params: undefined,
+      url: 'https://test.com/sse',
+    });
+
+    createReactRouterRequestHandler.mockReturnValue(mockHandler);
+    const handler = createRequestHandler({
+      build: {},
+    });
+
+    const response = await handler(mockHttpRequest, {});
+
+    expect(response.body).toBeInstanceOf(ReadableStream);
+    expect(response.headers).toEqual({
+      'cache-control': 'no-cache',
+      connection: 'keep-alive',
+      'content-type': 'text/event-stream',
+    });
+    expect(response.status).toBe(200);
   });
 });

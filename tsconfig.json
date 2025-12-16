@@ -1,7 +1,6 @@
 {
   "extends": "@tsconfig/node-lts/tsconfig.json",
   "compilerOptions": {
-    "composite": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "target": "ES2022",
@@ -14,6 +13,7 @@
     "noImplicitOverride": true,
     "module": "NodeNext",
     "noEmit": false,
+    "declaration": true,
     "checkJs": true,
     "lib": ["ES2022"],
     "moduleResolution": "NodeNext",
@@ -21,7 +21,6 @@
     "baseUrl": ".",
     "resolvePackageJsonExports": true,
     "resolvePackageJsonImports": true,
-    "declaration": true,
     "emitDeclarationOnly": true,
     "declarationMap": true,
     "outDir": "types",
