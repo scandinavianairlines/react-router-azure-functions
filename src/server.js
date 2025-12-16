@@ -1,9 +1,8 @@
-import { createRequestHandler as createRemixRequestHandler } from '@remix-run/node';
+import { createRequestHandler as createReactRouterRequestHandler } from 'react-router';
 
 /**
- * @typedef {(request: Request, context: import('@azure/functions').InvocationContext) => Promise<import('@remix-run/node').AppLoadContext>} GetLoadContextFn
+ * @typedef {(request: Request, context: import('@azure/functions').InvocationContext) => Promise<import('react-router').UNSAFE_MiddlewareEnabled extends true ? import('react-router').RouterContextProvider : import('react-router').AppLoadContext>} GetLoadContextFn
  */
-
 /**
  * Checks if the incoming request is a GET or HEAD request.
  * @param {import('@azure/functions').HttpRequest} request Azure HTTP request.
@@ -27,7 +26,11 @@ function urlParser(request) {
 
 /**
  * Creates a response object compatible with Azure Function.
- * @param {Response} response A Remix `Response` to the incoming request.
+ * This function passes the stream through to Azure Functions without consuming or buffering, enabling
+ * efficient handling of all response types, including large files and streaming data.
+ * The response is cloned to preserve the original stream for Azure Functions v4, which
+ * natively supports ReadableStream bodies.
+ * @param {Response} response A React Router `Response` to the incoming request (always contains a ReadableStream body).
  * @returns {Promise<import('@azure/functions').HttpResponseInit>} A Azure function `response init` object.
  */
 async function toAzureResponse(response) {
@@ -40,11 +43,11 @@ async function toAzureResponse(response) {
 }
 
 /**
- * Creates a new instance of Remix `Request` based on the incoming Azure HTTP request object.
+ * Creates a new instance of React Router `Request` based on the incoming Azure HTTP request object.
  * @param {import('@azure/functions').HttpRequest} request Azure HTTP request object.
  * @param {object} [options] The options object.
  * @param {typeof urlParser} [options.urlParser] Function to parse the incoming request to a URL object.
- * @returns {Request} An instance of Remix `Request`.
+ * @returns {Request} An instance of React Router `Request`.
  */
 function createRemixRequest(request, options = {}) {
   const url = options.urlParser?.(request) || urlParser(request);
@@ -66,22 +69,22 @@ function createRemixRequest(request, options = {}) {
 }
 
 /**
- * Returns a request handler for Azure Function that serves the response using Remix.
+ * Returns a request handler for Azure Function that serves the response using React Router.
  * @param {object} options The options object.
- * @param {import('@remix-run/node').ServerBuild | (() => Promise<import('@remix-run/node').ServerBuild>)} options.build The Remix server build.
- * @param {GetLoadContextFn} [options.getLoadContext] A function that returns the Remix load context.
+ * @param {import('react-router').ServerBuild | (() => Promise<import('react-router').ServerBuild>)} options.build The React Router server build (or a function that returns it).
+ * @param {GetLoadContextFn} [options.getLoadContext] A function that returns the React Router load context (AppLoadContext or RouterContextProvider).
  * @param {(request: import('@azure/functions').HttpRequest) => URL} [options.urlParser] A function that parses the incoming request to a URL object.
- * @param {string} [options.mode] The mode of the Remix server build. Defaults to `process.env.NODE_ENV`.
+ * @param {string} [options.mode] The mode of the React Router server build. Defaults to `process.env.NODE_ENV`.
  * @returns {import('@azure/functions').HttpHandler} A Azure function handler.
  */
 export function createRequestHandler(options) {
-  const handler = createRemixRequestHandler(options.build, options.mode || process.env.NODE_ENV);
+  const handler = createReactRouterRequestHandler(options.build, options.mode || process.env.NODE_ENV);
 
   /**
    * The main function handler for Azure Functions.
-   * Creates the Remix load context, transform the incoming request to a Remix `Request` object and
-   * generates a Remix `Response` object based on the incoming request. Finally, it transforms the
-   * Remix `Response` object to a Azure function `response` object.
+   * Creates the React Router load context, transform the incoming request to a React Router `Request` object and
+   * generates a React Router `Response` object based on the incoming request. Finally, it transforms the
+   * React Router `Response` object to a Azure function `response` object.
    * @param {import('@azure/functions').HttpRequest} request Azure HTTP request.
    * @param {import('@azure/functions').InvocationContext} context Azure function invocation context.
    * @returns {Promise<import('@azure/functions').HttpResponseInit>} A Azure Function `http response init` object.

@@ -1,17 +1,17 @@
 {
-  "name": "@scandinavianairlines/remix-azure-functions",
+  "name": "@scandinavianairlines/react-router-azure-functions",
   "version": "2.0.2",
-  "description": "A package that adapts requests between Azure Functions and Remix.run",
+  "description": "A package that adapts requests between Azure Functions and React Router",
   "keywords": [
     "adapter",
     "azure",
     "functions",
-    "remix-run",
+    "react-router",
     "serverless"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/scandinavianairlines/remix-azure-functions.git"
+    "url": "git+https://github.com/scandinavianairlines/react-router-azure-functions.git"
   },
   "license": "MIT",
   "author": "Airline Digitalization <airlinedigitalization@flysas.com>",
@@ -22,7 +22,6 @@
     "index.d.ts",
     "index.js",
     "README.md",
-    "src/is-binary-type.js",
     "src/server.js",
     "types/**/*.d.ts"
   ],
@@ -39,50 +38,42 @@
     "types": "tsc --noEmit --checkJs"
   },
   "peerDependencies": {
-    "@remix-run/node": "2.x"
+    "react": "^18.x || ^19.x",
+    "react-router": "^7.x"
   },
   "devDependencies": {
-    "@azure/functions": "^4.9.0",
-    "@commitlint/cli": "^20.1.0",
-    "@commitlint/config-conventional": "^20.0.0",
-    "@commitlint/cz-commitlint": "^20.1.0",
-    "@eslint/eslintrc": "^3.3.1",
-    "@remix-run/node": "^2.17.2",
+    "@azure/functions": "^4.10.0",
+    "@commitlint/cli": "^20.2.0",
+    "@commitlint/config-conventional": "^20.2.0",
+    "@commitlint/cz-commitlint": "^20.2.0",
+    "@eslint/eslintrc": "^3.3.3",
     "@trivago/prettier-plugin-sort-imports": "^6.0.0",
-    "@tsconfig/node-lts": "^22.0.2",
-    "@vitest/coverage-v8": "^4.0.8",
+    "@tsconfig/node-lts": "^24.0.0",
+    "@types/react": "^19.2.7",
+    "@vitest/coverage-v8": "^4.0.15",
     "commitizen": "^4.3.1",
-    "eslint": "^9.39.1",
+    "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-disable": "^2.0.3",
-    "eslint-plugin-jsdoc": "^61.1.12",
+    "eslint-plugin-jsdoc": "^61.5.0",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-sort-destructure-keys": "^2.0.0",
     "eslint-plugin-unicorn": "^62.0.0",
     "eslint-plugin-vitest": "^0.5.4",
     "husky": "^9.1.7",
-    "inquirer": "^9.3.8",
-    "lint-staged": "^16.2.6",
+    "inquirer": "^13.1.0",
+    "lint-staged": "^16.2.7",
     "neostandard": "^0.12.2",
     "pinst": "^3.0.0",
-    "prettier": "^3.6.2",
+    "prettier": "^3.7.4",
     "ramda": "^0.32.0",
+    "react": "^19.2.3",
+    "react-router": "^7.10.1",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.8"
+    "vitest": "^4.0.15"
   },
   "engines": {
-    "node": ">= 20"
+    "node": ">= 22"
   },
-  "resolutions": {
-    "@eslint/plugin-kit": ">=0.2.3",
-    "axios": ">=0.28.0",
-    "cookie": ">=0.7.0",
-    "cross-spawn": ">=7.0.5",
-    "nanoid": ">=3.3.8",
-    "path-to-regexp": ">=0.1.12",
-    "tar": ">=6.2.1",
-    "undici@5": ">=5.28.4",
-    "undici@6": ">=6.21.1"
-  },
-  "packageManager": "yarn@4.9.1"
+  "packageManager": "yarn@4.12.0"
 }

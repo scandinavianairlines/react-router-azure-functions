@@ -1,4 +1,4 @@
-import jsdoc from 'eslint-plugin-jsdoc';
+import { jsdoc } from 'eslint-plugin-jsdoc';
 import prettier from 'eslint-plugin-prettier/recommended';
 import sortDestructureKeys from 'eslint-plugin-sort-destructure-keys';
 import unicorn from 'eslint-plugin-unicorn';
@@ -10,7 +10,7 @@ import neostandard from 'neostandard';
  */
 export default [
   ...neostandard({ noJsx: true, semi: true, ts: false }),
-  jsdoc.configs['flat/recommended-typescript-flavor-error'],
+  jsdoc({ config: 'flat/recommended-typescript-flavor-error' }),
   unicorn.configs['recommended'],
   {
     files: ['*.js', '**/*.js'],
@@ -44,6 +44,7 @@ export default [
       ],
       strict: 'error',
       'sort-destructure-keys/sort-destructure-keys': ['error'],
+      'jsdoc/valid-types': ['warn'],
       'n/file-extension-in-import': ['error', 'always'],
       'n/no-missing-import': 'warn',
       'import-x/no-unresolved': 'error',
@@ -57,7 +58,6 @@ export default [
     },
   },
   {
-    // Disable `jsdoc` rules for test files
     files: ['**/?(*.)+(spec|test).?(m)[jt]s?(x)'],
     plugins: {
       vitest,
