@@ -1,6 +1,6 @@
 {
   "name": "@scandinavianairlines/react-router-azure-functions",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "description": "A package that adapts requests between Azure Functions and React Router",
   "keywords": [
     "adapter",
