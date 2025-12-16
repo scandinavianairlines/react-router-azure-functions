@@ -1,3 +1,26 @@
+# 3.0.0 (2025-12-16)
+
+
+### Features
+
+* **server:** migrate to React Router v7 0695839
+
+
+### BREAKING CHANGES
+
+* **server:** Migrated from Remix v2 to React Router v7.
+Package renamed to `@scandinavianairlines/react-router-azure-functions`.
+
+Changes:
+- Updated all imports from `@remix-run/node` to `react-router`
+- Added full streaming support with 3 new tests (SSE, large files)
+- Updated GetLoadContextFn type to support both context types
+- Added Azure Functions streaming config documentation
+- Removed examples directory to simplify maintenance
+- Created MIGRATION.md with complete upgrade guide
+
+See MIGRATION.md for details.
+
 ## 2.0.2 (2025-11-10)
 
 
