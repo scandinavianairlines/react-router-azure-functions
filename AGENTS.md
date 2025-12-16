@@ -78,7 +78,7 @@ The codebase is organized into distinct responsibilities:
                  ▼
 ┌─────────────────────────────────────────┐
 │  Request Transformer                    │
-│  (createRemixRequest)                   │
+│  (createRequest)                   │
 │  - Creates Web Request object           │
 │  - Handles method, headers, body        │
 └────────────────┬────────────────────────┘
@@ -136,7 +136,7 @@ export function createRequestHandler(options) {
 }
 
 // ✅ Use arrow functions for callbacks and internal functions
-const handler = createRemixRequestHandler(options.build, options.mode || process.env.NODE_ENV);
+const handler = createReactRouterRequestHandler(options.build, options.mode || process.env.NODE_ENV);
 ```
 
 **Async/Await:**
@@ -229,7 +229,7 @@ const loadContext = await options.getLoadContext?.(request, context);
 const mode = options.mode || process.env.NODE_ENV;
 
 // ✅ Validate inputs at boundaries
-function createRemixRequest(request, options = {}) {
+function createRequest(request, options = {}) {
   if (!request) {
     throw new TypeError('Request is required');
   }
@@ -242,9 +242,9 @@ function createRemixRequest(request, options = {}) {
 ```javascript
 // ✅ Don't catch errors unnecessarily - let them bubble up
 async function functionHandler(request, context) {
-  const remixRequest = createRemixRequest(request, { urlParser: options.urlParser });
-  const remixResponse = await handler(remixRequest, loadContext);
-  return toAzureResponse(remixResponse);
+  const request_ = createRemixRequest(request, { urlParser: options.urlParser });
+  const response = await handler(remixRequest, loadContext);
+  return toAzureResponse(response);
 }
 
 // ❌ Avoid swallowing errors
@@ -379,7 +379,7 @@ npm test -- --coverage
 ## File Structure
 
 ```
-remix-azure-functions/
+react-router-azure-functions/
 ├── .github/              # GitHub workflows and templates
 ├── .husky/               # Git hooks
 ├── coverage/             # Test coverage reports (gitignored)
@@ -606,7 +606,7 @@ async function toAzureResponse(response) {
 
 ```javascript
 // ✅ Provide both static and function patterns
-const handler = createRemixRequestHandler(
+const handler = createRequestHandler(
   options.build, // Can be static object or function returning Promise
   options.mode || process.env.NODE_ENV
 );
@@ -738,13 +738,13 @@ const url = new URL('./build', import.meta.url);
 
 ```javascript
 // ❌ Bad - Couples adapter to Azure
-const remixRequest = new Request(url, {
+const request_ = new Request(url, {
   headers: request.headers,
   'X-Azure-Function': context.invocationId, // Azure-specific!
 });
 
 // ✅ Good - Keep Azure logic in adapter layer
-const remixRequest = new Request(url, {
+const request_ = new Request(url, {
   headers: request.headers,
 });
 ```

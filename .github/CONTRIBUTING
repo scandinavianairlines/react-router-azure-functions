@@ -1,4 +1,4 @@
-# Contributing to `@scandinavianairlines/remix-azure-functions`
+# Contributing to `@scandinavianairlines/react-router-azure-functions`
 
 This document will familiarize you with our development process as well as _how to get your environment set up_.
 
@@ -127,6 +127,6 @@ There may be other branches for various features and experimentation, but all th
 [conventional-commits]: https://www.conventionalcommits.org/en/v1.0.0/
 [commitizen]: https://commitizen-tools.github.io/commitizen/
 [commitlint]: https://commitlint.js.org/#/
-[fork]: https://github.com/scandinavianairlines/remix-azure-functions
-[proposals]: https://github.com/scandinavianairlines/remix-azure-functions/discussions/categories/proposals
+[fork]: https://github.com/scandinavianairlines/react-router-azure-functions
+[proposals]: https://github.com/scandinavianairlines/react-router-azure-functions/discussions/categories/proposals
 [yarn_v3]: https://yarnpkg.com/getting-started/install

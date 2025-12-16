@@ -8,7 +8,7 @@
     }
   ],
   "tagFormat": "v${version}",
-  "repositoryUrl": "git@github.com:scandinavianairlines/remix-azure-functions",
+  "repositoryUrl": "git@github.com:scandinavianairlines/react-router-azure-functions",
   "plugins": [
     [
       "@semantic-release/commit-analyzer",
