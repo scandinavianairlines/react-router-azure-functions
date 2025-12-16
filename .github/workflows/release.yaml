@@ -5,7 +5,7 @@ on:
     branches: [main, next]
 
 env:
-  SEMANTIC_RELEASE_VERSION: 22.0.12
+  SEMANTIC_RELEASE_VERSION: 25.0.2
 
 jobs:
   release:
@@ -24,16 +24,17 @@ jobs:
           app-id: ${{ vars.GANDALF_APP_ID }}
           private-key: ${{ secrets.GANDALF_PRIVATE_KEY }}
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           # Needs to fetch historical commits in order to compare with origin/main
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
       - name: Setup Node.js environment
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 20
           cache: yarn
+          node-version: 24
+          registry-url: https://registry.npmjs.org
       - name: Install dependencies
         run: yarn install --immutable --check-cache
       - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
@@ -45,7 +46,6 @@ jobs:
           GIT_COMMITTER_NAME: ${{ vars.GANDALF_NAME }}
           GIT_COMMITTER_EMAIL: ${{ vars.GANDALF_EMAIL }}
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           HUSKY: 0
         run: |
           yarn dlx --package @semantic-release/commit-analyzer --package @semantic-release/release-notes-generator --package @semantic-release/npm --package @semantic-release/github --package @semantic-release/git --package @semantic-release/changelog --package semantic-release@${{ env.SEMANTIC_RELEASE_VERSION }} semantic-release
