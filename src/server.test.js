@@ -334,6 +334,58 @@ describe('server', () => {
     expect(createReactRouterRequestHandler).toHaveBeenCalledWith(buildFn, expect.any(String));
   });
 
+  test('sends every Set-Cookie of the React Router response as Azure cookies', async () => {
+    const headers = new Headers([
+      ['Content-Type', 'text/plain'],
+      ['Set-Cookie', 'oauth=state%3Dabc%26nonce%3Ddef; Domain=test.com; Path=/; HttpOnly; Secure; SameSite=Lax'],
+      ['Set-Cookie', 'return_to=%2Facme%3Fid%3D1; Domain=test.com; Path=/api/login; Max-Age=600; SameSite=strict'],
+      ['Set-Cookie', 'legacy=1; Expires=Thu, 01 Jan 2026 00:00:00 GMT'],
+    ]);
+    createReactRouterRequestHandler.mockReturnValue(
+      vi.fn().mockResolvedValue(new Response(null, { status: 302, headers }))
+    );
+    const handler = createRequestHandler({ build: {} });
+
+    const response = await handler(
+      new HttpRequest({ method: 'GET', headers: { 'x-forwarded-host': 'test.com' }, url: 'https://test.com' }),
+      {}
+    );
+
+    expect(response.headers).toEqual({ 'content-type': 'text/plain' });
+    expect(response.cookies).toEqual([
+      {
+        name: 'oauth',
+        value: 'state=abc&nonce=def',
+        domain: 'test.com',
+        path: '/',
+        httpOnly: true,
+        secure: true,
+        sameSite: 'Lax',
+      },
+      {
+        name: 'return_to',
+        value: '/acme?id=1',
+        domain: 'test.com',
+        path: '/api/login',
+        maxAge: 600,
+        sameSite: 'Strict',
+      },
+      { name: 'legacy', value: '1', expires: new Date('Thu, 01 Jan 2026 00:00:00 GMT') },
+    ]);
+  });
+
+  test('does not add a cookies list when the response sets no cookies', async () => {
+    createReactRouterRequestHandler.mockReturnValue(vi.fn().mockResolvedValue(new Response()));
+    const handler = createRequestHandler({ build: {} });
+
+    const response = await handler(
+      new HttpRequest({ method: 'GET', headers: { 'x-forwarded-host': 'test.com' }, url: 'https://test.com' }),
+      {}
+    );
+
+    expect(response).not.toHaveProperty('cookies');
+  });
+
   test('supports streaming responses with ReadableStream', async () => {
     const streamContent = 'streaming data chunk';
     const stream = new ReadableStream({
