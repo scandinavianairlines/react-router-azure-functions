@@ -1,3 +1,10 @@
+# 3.1.0 (2026-10-02)
+
+
+### Features
+
+* **server:** add Set-Cookie header to Azure Functions cookies array 526a3a5
+
 ## 3.0.1 (2026-06-24)
 
 
