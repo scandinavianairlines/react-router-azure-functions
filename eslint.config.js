@@ -1,9 +1,9 @@
+import vitest from '@vitest/eslint-plugin';
 import importX from 'eslint-plugin-import-x';
 import { jsdoc } from 'eslint-plugin-jsdoc';
 import prettier from 'eslint-plugin-prettier/recommended';
 import sortDestructureKeys from 'eslint-plugin-sort-destructure-keys';
 import unicorn from 'eslint-plugin-unicorn';
-import vitest from 'eslint-plugin-vitest';
 import neostandard from 'neostandard';
 
 /**
