@@ -25,6 +25,64 @@ function urlParser(request) {
 }
 
 /**
+ * Decodes a cookie value, keeping it as-is when it is not valid URI encoding.
+ * Azure Functions URI-encodes cookie values when serializing them, so they must be passed decoded.
+ * @param {string} value Raw cookie value.
+ * @returns {string} The decoded value.
+ */
+function decodeCookieValue(value) {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
+/** @type {Record<string, (cookie: import('@azure/functions').Cookie, value: string) => import('@azure/functions').Cookie>} */
+const COOKIE_ATTRIBUTES = {
+  domain: (cookie, value) => ({ ...cookie, domain: value }),
+  path: (cookie, value) => ({ ...cookie, path: value }),
+  expires: (cookie, value) => ({ ...cookie, expires: new Date(value) }),
+  'max-age': (cookie, value) => ({ ...cookie, maxAge: Number(value) }),
+  secure: cookie => ({ ...cookie, secure: true }),
+  httponly: cookie => ({ ...cookie, httpOnly: true }),
+  samesite: (cookie, value) => ({
+    ...cookie,
+    sameSite: /** @type {'Strict' | 'Lax' | 'None'} */ (
+      `${value.charAt(0).toUpperCase()}${value.slice(1).toLowerCase()}`
+    ),
+  }),
+};
+
+/**
+ * Parses a `Set-Cookie` header value into an Azure Functions cookie.
+ * Azure Functions only sends multiple cookies when they are given through the `cookies` list:
+ * a `Set-Cookie` entry in the headers object can hold a single cookie.
+ * @param {string} setCookie A `Set-Cookie` header value.
+ * @returns {import('@azure/functions').Cookie} An Azure Functions cookie.
+ */
+function toAzureCookie(setCookie) {
+  const [pair = '', ...attributes] = setCookie.split(';');
+  const separator = pair.indexOf('=');
+  const name = pair.slice(0, separator).trim();
+  const value = decodeCookieValue(pair.slice(separator + 1).trim());
+
+  /** @type {import('@azure/functions').Cookie} */
+  let cookie = { name, value };
+
+  for (const attribute of attributes) {
+    const [key = '', ...rest] = attribute.split('=');
+    const apply = COOKIE_ATTRIBUTES[key.trim().toLowerCase()];
+
+    if (apply) {
+      cookie = apply(cookie, rest.join('=').trim());
+    }
+  }
+
+  return cookie;
+}
+
+/**
  * Creates a response object compatible with Azure Function.
  * This function passes the stream through to Azure Functions without consuming or buffering, enabling
  * efficient handling of all response types, including large files and streaming data.
@@ -35,10 +93,15 @@ function urlParser(request) {
  */
 async function toAzureResponse(response) {
   const _response = response.clone();
+  const cookies = response.headers.getSetCookie().map(setCookie => toAzureCookie(setCookie));
+  const headers = new Headers(response.headers);
+  headers.delete('set-cookie');
+
   return {
     body: _response.body,
-    headers: Object.fromEntries(response.headers.entries()),
+    headers: Object.fromEntries(headers.entries()),
     status: response.status,
+    ...(cookies.length > 0 && { cookies }),
   };
 }
 
