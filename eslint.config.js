@@ -1,22 +1,29 @@
+import js from '@eslint/js';
+import stylistic from '@stylistic/eslint-plugin';
 import vitest from '@vitest/eslint-plugin';
 import importX from 'eslint-plugin-import-x';
 import { jsdoc } from 'eslint-plugin-jsdoc';
+import node from 'eslint-plugin-n';
 import prettier from 'eslint-plugin-prettier/recommended';
+import promise from 'eslint-plugin-promise';
 import sortDestructureKeys from 'eslint-plugin-sort-destructure-keys';
 import unicorn from 'eslint-plugin-unicorn';
-import neostandard from 'neostandard';
+import globals from 'globals';
 
 /**
  * @type {Array<import('eslint').Linter.Config>}
  */
 export default [
-  ...neostandard({ noJsx: true, semi: true, ts: false }),
+  js.configs.recommended,
+  node.configs['flat/recommended-module'],
+  promise.configs['flat/recommended'],
   jsdoc({ config: 'flat/recommended-typescript-flavor-error' }),
-  unicorn.configs['recommended'],
+  unicorn.configs.recommended,
   {
     files: ['*.js', '**/*.js'],
     ignores: ['**/coverage', 'eslint.config.js'],
     languageOptions: {
+      globals: globals.node,
       parserOptions: {
         ecmaFeatures: {
           impliedStrict: true,
@@ -27,8 +34,10 @@ export default [
       sourceType: 'module',
     },
     plugins: {
+      '@stylistic': stylistic,
       'sort-destructure-keys': sortDestructureKeys,
       'import-x': importX,
+      n: node,
     },
     settings: {
       languageOptions: {
@@ -49,6 +58,7 @@ export default [
       'jsdoc/valid-types': ['warn'],
       'n/file-extension-in-import': ['error', 'always'],
       'n/no-missing-import': 'warn',
+      'n/no-unsupported-features/node-builtins': 'off',
       'import-x/no-unresolved': 'error',
       'import-x/named': 'error',
       'import-x/namespace': 'error',
@@ -61,6 +71,9 @@ export default [
   },
   {
     files: ['**/?(*.)+(spec|test).?(m)[jt]s?(x)'],
+    languageOptions: {
+      globals: { ...globals.node, ...globals.vitest },
+    },
     plugins: {
       vitest,
     },
