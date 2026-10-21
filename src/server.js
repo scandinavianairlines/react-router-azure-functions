@@ -110,19 +110,20 @@ async function toAzureResponse(response) {
  * @param {import('@azure/functions').HttpRequest} request Azure HTTP request object.
  * @param {object} [options] The options object.
  * @param {typeof urlParser} [options.urlParser] Function to parse the incoming request to a URL object.
+ * @param {AbortSignal} [options.signal] An extra signal that also aborts the request signal, with its reason.
  * @returns {Request} An instance of React Router `Request`.
  */
 function createRequest(request, options = {}) {
   const url = options.urlParser?.(request) || urlParser(request);
-  // Note: No current way to abort these for Azure, but our router expects
-  // requests to contain a signal so it can detect aborted requests
+  // Azure does not tell the worker about a client disconnect, so this controller never aborts on its own. The router
+  // expects requests to contain a signal, and an extra `signal` (for example a deadline) can abort it.
   const controller = new AbortController();
 
   /** @type {RequestInit} */
   const init = {
     method: request.method,
     headers: request.headers,
-    signal: controller.signal,
+    signal: options.signal ? AbortSignal.any([controller.signal, options.signal]) : controller.signal,
     // eslint-disable-next-line unicorn/no-null -- Request init expects a `null` value.
     body: isGetOrHead(request) ? null : request.body,
     // @ts-expect-error -- `duplex` is not part of the RequestInit type, but it is required for streaming requests.
@@ -138,6 +139,7 @@ function createRequest(request, options = {}) {
  * @param {import('react-router').ServerBuild | (() => Promise<import('react-router').ServerBuild>)} options.build The React Router server build (or a function that returns it).
  * @param {GetLoadContextFn} [options.getLoadContext] A function that returns the React Router load context (AppLoadContext or RouterContextProvider).
  * @param {(request: import('@azure/functions').HttpRequest) => URL} [options.urlParser] A function that parses the incoming request to a URL object.
+ * @param {(request: import('@azure/functions').HttpRequest, context: import('@azure/functions').InvocationContext) => AbortSignal | undefined} [options.getSignal] A function that returns an extra signal for each request, such as `AbortSignal.timeout(ms)` to set a deadline. When it aborts, `request.signal` aborts with the same reason.
  * @param {string} [options.mode] The mode of the React Router server build. Defaults to `process.env.NODE_ENV`.
  * @returns {import('@azure/functions').HttpHandler} A Azure function handler.
  */
@@ -155,7 +157,10 @@ export function createRequestHandler(options) {
    * @returns {Promise<import('@azure/functions').HttpResponseInit>} A Azure Function `http response init` object.
    */
   async function functionHandler(request, context) {
-    const request_ = createRequest(request, { urlParser: options.urlParser });
+    const request_ = createRequest(request, {
+      urlParser: options.urlParser,
+      signal: options.getSignal?.(request, context),
+    });
     const loadContext = await options.getLoadContext?.(request_, context);
     const response = await handler(request_, loadContext);
 
