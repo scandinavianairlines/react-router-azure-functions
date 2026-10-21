@@ -1,3 +1,10 @@
+# 3.2.0 (2026-10-21)
+
+
+### Features
+
+* **server:** add getSignal option 4faf6f6
+
 # 3.1.0 (2026-10-02)
 
 
