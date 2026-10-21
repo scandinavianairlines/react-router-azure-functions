@@ -128,6 +128,17 @@ const handler = createRequestHandler({
 });
 ```
 
+### Request deadline
+
+Azure Functions does not tell the worker when a client disconnects, so `request.signal` never aborts on its own. The optional `getSignal` function is called once per invocation with the Azure request and context, and returns an extra signal. When that signal aborts, `request.signal` aborts with the same reason, so loaders that pass `request.signal` to `fetch` stop waiting.
+
+```javascript
+const handler = createRequestHandler({
+  build,
+  getSignal: () => AbortSignal.timeout(10_000),
+});
+```
+
 ### Streaming Support
 
 **Important:** React Router responses are always streams (`ReadableStream`) by default, even for simple JSON or HTML responses. The adapter passes all response streams through to Azure Functions without consuming or buffering them, ensuring optimal performance for all response types.

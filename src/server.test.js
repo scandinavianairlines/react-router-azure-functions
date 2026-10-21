@@ -141,6 +141,49 @@ describe('server', () => {
     expect(mockUrlParser).toHaveBeenCalledWith(mockHttpRequest);
   });
 
+  describe('getSignal', () => {
+    const run = async options => {
+      const mockHandler = vi.fn().mockResolvedValue(new Response());
+      const mockHttpRequest = new HttpRequest({
+        method: 'GET',
+        headers: { 'x-forwarded-host': 'test.com' },
+        params: undefined,
+        url: 'https://test.com',
+      });
+      createReactRouterRequestHandler.mockReturnValue(mockHandler);
+      await createRequestHandler({ build: {}, ...options })(mockHttpRequest, { invocationId: 'i1' });
+      return { signal: mockHandler.mock.calls[0][0].signal, mockHttpRequest };
+    };
+
+    test('aborts request.signal with the reason of the extra signal', async () => {
+      const controller = new AbortController();
+      const { signal } = await run({ getSignal: () => controller.signal });
+      expect(signal.aborted).toBe(false);
+
+      controller.abort(new DOMException('timed out', 'TimeoutError'));
+
+      expect(signal.aborted).toBe(true);
+      expect(signal.reason.name).toBe('TimeoutError');
+    });
+
+    test('gives an already aborted request.signal for an already aborted extra signal', async () => {
+      const { signal } = await run({ getSignal: () => AbortSignal.abort(new DOMException('x', 'TimeoutError')) });
+      expect(signal.aborted).toBe(true);
+      expect(signal.reason.name).toBe('TimeoutError');
+    });
+
+    test('keeps request.signal unaborted without getSignal', async () => {
+      const { signal } = await run({});
+      expect(signal.aborted).toBe(false);
+    });
+
+    test('calls getSignal once with the Azure request and context', async () => {
+      const getSignal = vi.fn();
+      const { mockHttpRequest } = await run({ getSignal });
+      expect(getSignal).toHaveBeenCalledExactlyOnceWith(mockHttpRequest, { invocationId: 'i1' });
+    });
+  });
+
   test('parses the host from the `host` header', async () => {
     const mockHandler = vi.fn().mockResolvedValue(new Response());
     const mockHttpRequest = new HttpRequest({
