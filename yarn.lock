@@ -13,12 +13,12 @@ __metadata:
   linkType: hard
 
 "@azure/functions@npm:^4.16.5":
-  version: 4.16.5
-  resolution: "@azure/functions@npm:4.16.5"
+  version: 4.17.0
+  resolution: "@azure/functions@npm:4.17.0"
   dependencies:
     "@azure/functions-extensions-base": "npm:0.3.0"
     cookie: "npm:^0.7.0"
-  checksum: 10c0/c2af175d21f9adcbb21be7cfddce878b3a258924fcecf5ac0ad49956d54291ca8b8f0e6f60279c4ba9883bc6653a0c082b63d5be9729abbc30a47a95ab4b2e52
+  checksum: 10c0/6417cd7c0f7dfea6bad0a6ab782a1978be46b6459a004dec1adbb245c7b9d610927bfc8c21c98e7b8d3580c85ed1851aa41aa8c1221fdc91d22b8fcfe531cc49
   languageName: node
   linkType: hard
 
